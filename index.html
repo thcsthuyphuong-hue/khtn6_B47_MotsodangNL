@@ -1,0 +1,579 @@
+Notepad++ v8.8.7 new features & bug-fixes:
+
+ 1. Sign Notepad++ binaries with GlobalSign certificat to fix false-positive alerts.
+ 2. Fix Monitoring in one view affects selections and position in second view.
+ 3. Fix Shortcut Mapper memory leak issue.
+ 4. Enhance Perl FunctionList for class.
+ 5. Fix pressing Alt or Tab causes controls redrawing problem in UDL dialog.
+
+
+Notepad++ v8.8.6 new features & bug-fixes:
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ai là triệu phú - KHTN 6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body { font-family: 'Roboto', sans-serif; background: #0a0a2e; color: white; overflow-x: hidden; }
+        .bg-gradient-main { background: radial-gradient(circle, #1a1a4a 0%, #05051a 100%); }
+        .btn-answer { background: linear-gradient(to right, #2c3e50, #000000); border: 2px solid #3498db; transition: all 0.3s; cursor: pointer; }
+        .btn-answer:hover { background: #34495e; border-color: #f1c40f; transform: scale(1.02); }
+        .btn-selected { background: #f39c12 !important; color: #000; border-color: #fff !important; }
+        .btn-correct { background: #27ae60 !important; border-color: #fff !important; animation: blink 0.5s step-end infinite alternate; }
+        .btn-wrong { background: #c0392b !important; border-color: #fff !important; }
+        .money-item { transition: all 0.3s; padding: 2px 8px; border-radius: 4px; }
+        .money-active { background: #f1c40f; color: #000; font-weight: bold; }
+        .money-milestone { color: #f1c40f; }
+        .money-milestone-yellow { color: #ffff00; font-weight: bold; }
+        .money-milestone-blue { color: #3498db; font-weight: bold; }
+        .money-milestone-red { color: #e74c3c; font-weight: bold; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        .modal { background: rgba(0,0,0,0.9); position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .option-ds { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .ds-btn { padding: 5px 15px; border-radius: 5px; border: 1px solid #555; transition: 0.2s; }
+        .ds-true.active { background: #27ae60; color: white; border-color: #fff; }
+        .ds-false.active { background: #c0392b; color: white; border-color: #fff; }
+        .history-card { background: white; color: black; border-radius: 8px; padding: 15px; margin-bottom: 10px; text-align: left; }
+    </style>
+</head>
+<body class="bg-gradient-main min-h-screen flex flex-col items-center p-4">
+
+    <!-- Header Section -->
+    <div id="game-header" class="w-full max-w-6xl flex justify-between items-center mb-4 border-b border-blue-900 pb-2 hidden">
+        <div class="text-lg">
+            <span id="display-info" class="font-bold text-yellow-400"></span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div id="timer" class="text-2xl font-bold text-red-500 bg-black px-4 py-1 rounded-full border border-red-500">180s</div>
+            <div class="flex gap-2">
+                <button onclick="help5050()" id="help-5050" class="bg-blue-700 p-2 rounded hover:bg-blue-600 border border-white">50:50</button>
+                <button onclick="helpPhone()" id="help-phone" class="bg-blue-700 p-2 rounded hover:bg-blue-600 border border-white">📞 Thân</button>
+                <button onclick="helpAudience()" id="help-audience" class="bg-blue-700 p-2 rounded hover:bg-blue-600 border border-white">👥 Khán giả</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div id="start-screen" class="w-full max-w-md bg-blue-900 p-8 rounded-xl shadow-2xl text-center">
+        <h1 class="text-3xl font-bold mb-6 text-yellow-400">AI LÀ TRIỆU PHÚ<br><span class="text-xl">KHTN 6 - BÀI 47</span></h1>
+        <div class="space-y-4">
+            <input id="input-name" type="text" placeholder="Họ và tên" class="w-full p-3 rounded text-black outline-none focus:ring-2 ring-yellow-400 text-lg">
+            <input id="input-sbd" type="text" placeholder="Số báo danh" class="w-full p-3 rounded text-black outline-none focus:ring-2 ring-yellow-400 text-lg">
+            <input id="input-class" type="text" placeholder="Lớp - Trường" class="w-full p-3 rounded text-black outline-none focus:ring-2 ring-yellow-400 text-lg">
+            <button onclick="startGame()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold py-4 rounded-full text-2xl transition shadow-lg uppercase">Vào ngồi ghế nóng</button>
+        </div>
+    </div>
+
+    <div id="game-play" class="w-full max-w-7xl hidden flex flex-col md:flex-row gap-4">
+        <!-- Question Area -->
+        <div class="flex-grow flex flex-col gap-4">
+            <div id="question-box" class="bg-blue-900 p-6 rounded-lg border-l-4 border-yellow-400 min-h-[150px] flex items-center">
+                <p id="question-text" class="text-2xl leading-relaxed"></p>
+            </div>
+
+            <!-- Hint Area -->
+            <div id="hint-box" class="hidden bg-green-800 p-4 rounded-lg border border-white animate-pulse">
+                <p id="hint-text" class="italic"></p>
+            </div>
+
+            <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Answers will be injected here -->
+            </div>
+
+            <!-- Input area for short answer questions -->
+            <div id="short-answer-container" class="hidden bg-blue-800 p-6 rounded-lg text-center">
+                <input id="short-input" type="text" placeholder="Nhập kết quả không quá 4 kí tự..." class="p-3 w-64 rounded text-black text-xl mb-4">
+                <br>
+                <button onclick="submitShortAnswer()" class="bg-yellow-500 text-blue-900 font-bold px-8 py-2 rounded-lg text-xl hover:bg-yellow-400">Gửi kết quả</button>
+            </div>
+
+            <!-- Submit for True/False -->
+            <div id="tf-submit-container" class="hidden text-center mt-4">
+                <button id="btn-submit-tf" onclick="submitTrueFalse()" class="bg-yellow-500 text-blue-900 font-bold px-10 py-3 rounded-lg text-xl opacity-50 cursor-not-allowed" disabled>Gửi kết quả</button>
+            </div>
+        </div>
+
+        <!-- Scoreboard -->
+        <div class="w-full md:w-24 flex flex-col gap-1 bg-black bg-opacity-50 p-2 rounded-lg border border-blue-800 text-sm">
+            <div id="score-board">
+                <!-- Scores injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden w-full max-w-4xl bg-blue-900 p-8 rounded-xl text-center overflow-y-auto max-h-[90vh]">
+        <h2 id="result-title" class="text-4xl font-bold text-yellow-400 mb-4">CHÚC MỪNG!</h2>
+        <div id="result-info" class="text-xl mb-6"></div>
+        <div class="flex justify-center gap-4 mb-8">
+            <button onclick="showHistory()" class="bg-green-600 hover:bg-green-500 px-6 py-2 rounded-lg font-bold">Lịch sử làm bài</button>
+            <button onclick="restartGame()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg font-bold">Làm lại</button>
+        </div>
+        <div id="history-container" class="hidden mt-6 text-left"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-auto py-4 text-gray-400 text-sm">
+        Bản quyền thuộc về Trường THCS Thủy Phương, Thành phố Huế
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="audio-bg" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-click">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-correct">
+        <source src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-wrong">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Constants & Config
+        const SCORE_LEVELS = [
+            {q: 20, points: 10, color: 'milestone-red'},
+            {q: 19, points: 9.8},
+            {q: 18, points: 9.5},
+            {q: 17, points: 9.2},
+            {q: 16, points: 9.0},
+            {q: 15, points: 8.8},
+            {q: 14, points: 8.5},
+            {q: 13, points: 8.2},
+            {q: 12, points: 8.0},
+            {q: 11, points: 7.5},
+            {q: 10, points: 7.0, color: 'milestone-blue'},
+            {q: 9, points: 6.5},
+            {q: 8, points: 6.0},
+            {q: 7, points: 5.5},
+            {q: 6, points: 5.2},
+            {q: 5, points: 5.0, color: 'milestone-yellow'},
+            {q: 4, points: 4.0},
+            {q: 3, points: 3.0},
+            {q: 2, points: 2.0},
+            {q: 1, points: 1.0}
+        ];
+
+        // Question Database (40 questions)
+        const QUESTION_POOL = {
+            // MCQ (24 items)
+            mcq: [
+                { id: 1, level: "Biết", q: "Dạng năng lượng nào liên quan đến chuyển động của vật?", a: ["Động năng", "Thế năng hấp dẫn", "Năng lượng hóa năng", "Năng lượng hạt nhân"], c: 0, r: "Động năng là năng lượng mà một vật có được nhờ chuyển động.", h: "Hãy nhớ lại định nghĩa về năng lượng gắn với tốc độ." },
+                { id: 2, level: "Biết", q: "Thế năng hấp dẫn là dạng năng lượng vật có được do", a: ["Độ cao so với mặt đất", "Chuyển động quay", "Sự co giãn của vật", "Sự thay đổi nhiệt độ"], c: 0, r: "Thế năng hấp dẫn phụ thuộc vào độ cao của vật so với mốc chọn.", h: "Vật càng cao thì năng lượng này càng lớn." },
+                { id: 3, level: "Biết", q: "Năng lượng từ Mặt Trời chiếu xuống Trái Đất thuộc dạng nào?", a: ["Năng lượng ánh sáng", "Năng lượng âm thanh", "Năng lượng hóa năng", "Năng lượng hạt nhân"], c: 0, r: "Mặt Trời phát ra ánh sáng mang theo năng lượng đến Trái Đất.", h: "Đây là dạng năng lượng giúp chúng ta nhìn thấy mọi vật." },
+                { id: 4, level: "Biết", q: "Trong pin và acquy dự trữ dạng năng lượng nào?", a: ["Hóa năng", "Nhiệt năng", "Điện năng", "Cơ năng"], c: 0, r: "Pin lưu trữ năng lượng dưới dạng hóa năng để chuyển đổi thành điện năng.", h: "Năng lượng này được giải phóng qua các phản ứng hóa học." },
+                { id: 5, level: "Biết", q: "Dạng năng lượng nào sinh ra khi chúng ta gảy dây đàn guitar?", a: ["Năng lượng âm thanh", "Năng lượng hóa năng", "Năng lượng hạt nhân", "Thế năng đàn hồi"], c: 0, r: "Dây đàn rung động tạo ra sóng âm mang theo năng lượng âm thanh.", h: "Năng lượng này truyền qua không khí đến tai ta." },
+                { id: 6, level: "Biết", q: "Thực phẩm cung cấp năng lượng cho con người dưới dạng", a: ["Hóa năng", "Nhiệt năng", "Cơ năng", "Quang năng"], c: 0, r: "Thức ăn chứa các liên kết hóa học cung cấp năng lượng cho cơ thể.", h: "Cần thiết cho mọi hoạt động sống của con người." },
+                { id: 7, level: "Biết", q: "Dòng điện chạy qua bóng đèn mang theo dạng năng lượng nào?", a: ["Điện năng", "Hóa năng", "Cơ năng", "Âm thanh"], c: 0, r: "Dòng điện mang theo năng lượng gọi là điện năng.", h: "Dạng năng lượng phổ biến nhất dùng trong thiết bị gia đình." },
+                { id: 8, level: "Biết", q: "Vật nào sau đây đang sở hữu thế năng đàn hồi?", a: ["Lò xo đang bị nén", "Hòn đá nằm yên trên đất", "Viên bi đang lăn", "Ngọn đèn đang sáng"], c: 0, r: "Thế năng đàn hồi xuất hiện khi vật bị biến dạng đàn hồi.", h: "Hãy tìm vật có khả năng tự lấy lại hình dạng ban đầu." },
+                { id: 9, level: "Hiểu", q: "Khi một chiếc máy bay đang bay trên cao, nó sở hữu những dạng năng lượng nào?", a: ["Động năng và thế năng", "Chỉ có thế năng", "Chỉ có động năng", "Hóa năng và nhiệt năng"], c: 0, r: "Máy bay vừa chuyển động (động năng) vừa có độ cao (thế năng).", h: "Máy bay không chỉ đứng yên ở trên cao." },
+                { id: 10, level: "Hiểu", q: "Trường hợp nào sau đây có sự chuyển hóa từ hóa năng sang nhiệt năng?", a: ["Đốt cháy một que diêm", "Bật quạt điện", "Thả một quả bóng rơi", "Đẩy xe trên đường"], c: 0, r: "Khi diêm cháy, năng lượng hóa học chuyển thành nhiệt làm nóng không khí.", h: "Quá trình này giải phóng nhiệt lượng rất lớn." },
+                { id: 11, level: "Hiểu", q: "Một viên bi sắt lăn trên sàn nhà gỗ. Năng lượng nào giảm dần do ma sát?", a: ["Động năng", "Thế năng", "Hóa năng", "Năng lượng ánh sáng"], c: 0, r: "Ma sát làm tốc độ viên bi giảm, dẫn đến động năng giảm.", h: "Liên quan đến chuyển động của viên bi." },
+                { id: 12, level: "Hiểu", q: "Tại sao xăng dầu được coi là nguồn năng lượng hóa năng?", a: ["Chứa năng lượng trong liên kết hóa học", "Vì nó là chất lỏng", "Vì nó dễ bay hơi", "Vì nó có mùi đặc trưng"], c: 0, r: "Năng lượng được giải phóng khi thực hiện phản ứng cháy (hóa học).", h: "Năng lượng nằm trong cấu tạo phân tử của chất." },
+                { id: 13, level: "Hiểu", q: "Phát biểu nào sau đây đúng về năng lượng nhiệt?", a: ["Mọi vật đều có nhiệt năng", "Chỉ vật nóng mới có nhiệt năng", "Vật càng lớn nhiệt năng càng nhỏ", "Nhiệt năng không thể truyền đi"], c: 0, r: "Mọi vật cấu tạo từ các hạt luôn chuyển động nên luôn có nhiệt năng.", h: "Kể cả một tảng băng cũng có nhiệt năng." },
+                { id: 14, level: "Hiểu", q: "Khi dùng đèn pin, có sự chuyển hóa năng lượng chính nào xảy ra?", a: ["Hóa năng thành điện năng rồi thành quang năng", "Điện năng thành hóa năng", "Quang năng thành nhiệt năng", "Cơ năng thành điện năng"], c: 0, r: "Pin (hóa năng) tạo dòng điện (điện năng) làm đèn sáng (quang năng).", h: "Hãy đi từ nguồn cung cấp năng lượng ban đầu." },
+                { id: 15, level: "Hiểu", q: "Vật nào có động năng lớn nhất trong các trường hợp sau?", a: ["Xe tải nặng đang chạy nhanh", "Em bé đang đi bộ", "Quả bóng đang bay chậm", "Chiếc lá đang rơi"], c: 0, r: "Động năng phụ thuộc vào khối lượng và tốc độ của vật.", h: "Xét cả độ nặng và tốc độ chuyển động." },
+                { id: 16, level: "Hiểu", q: "Bếp từ sử dụng năng lượng nào để làm chín thức ăn?", a: ["Điện năng", "Hóa năng", "Cơ năng", "Quang năng"], c: 0, r: "Bếp từ chuyển hóa điện năng thành nhiệt năng trực tiếp ở đáy nồi.", h: "Nguồn cung cấp là ổ cắm điện." },
+                { id: 17, level: "Vận dụng", q: "Một vận động viên đang thực hiện cú nhảy sào. Tại điểm cao nhất, năng lượng chủ yếu là", a: ["Thế năng hấp dẫn", "Động năng", "Hóa năng", "Nhiệt năng"], c: 0, r: "Tại đỉnh cao nhất, tốc độ bằng 0 nhưng độ cao là lớn nhất.", h: "Lúc này vận động viên tạm dừng chuyển động trong tích tắc." },
+                { id: 18, level: "Vận dụng", q: "Khi bắn cung, năng lượng được tích lũy ở dây cung bị kéo căng là", a: ["Thế năng đàn hồi", "Thế năng hấp dẫn", "Động năng", "Hóa năng"], c: 0, r: "Dây cung bị biến dạng nên tích lũy thế năng đàn hồi.", h: "Năng lượng do sự biến dạng của vật đàn hồi." },
+                { id: 19, level: "Vận dụng", q: "Máy phát điện gió chuyển hóa dạng năng lượng nào thành điện năng?", a: ["Động năng của không khí", "Hóa năng của gió", "Nhiệt năng mặt trời", "Thế năng của mây"], c: 0, r: "Gió thổi làm quay cánh quạt (động năng) tạo ra điện năng.", h: "Gió là sự chuyển động của các khối khí." },
+                { id: 20, level: "Vận dụng", q: "Sử dụng pin năng lượng mặt trời là quá trình biến đổi", a: ["Quang năng thành điện năng", "Nhiệt năng thành điện năng", "Hóa năng thành quang năng", "Cơ năng thành điện năng"], c: 0, r: "Tế bào quang điện hấp thụ ánh sáng và tạo ra dòng điện.", h: "Nhìn vào tên gọi của thiết bị." },
+                { id: 21, level: "Vận dụng", q: "Trong các nhà máy thủy điện, nước từ trên cao đổ xuống làm quay tuabin. Đây là sự chuyển hóa", a: ["Thế năng thành động năng rồi thành điện năng", "Động năng thành thế năng", "Hóa năng thành điện năng", "Nhiệt năng thành cơ năng"], c: 0, r: "Nước ở cao (thế năng) chảy xuống (động năng) làm quay máy phát (điện năng).", h: "Thủy điện tận dụng độ cao của nguồn nước." },
+                { id: 22, level: "Vận dụng", q: "Một viên bi sắt 100 g đang lăn trên sàn với tốc độ 10 m/s. Động năng của viên bi là", a: ["5 J", "500 J", "1000 J", "0,5 J"], c: 0, r: "$W_d = \\frac{1}{2}mv^2 = 0,5 \\times 0,1 \\times 10^2 = 5$ J.", h: "Đổi 100g sang kg trước khi tính toán." },
+                { id: 23, level: "Vận dụng", q: "Cần cẩu nâng một khối đá nặng 2 tấn lên cao 5 m. Năng lượng đá có được là", a: ["Thế năng hấp dẫn", "Thế năng đàn hồi", "Động năng", "Nhiệt năng"], c: 0, r: "Vật được đưa lên cao so với mặt đất nên có thế năng hấp dẫn.", h: "Khối đá đứng yên ở độ cao 5m." },
+                { id: 24, level: "Vận dụng", q: "Tại sao khi xoa hai bàn tay vào nhau ta thấy tay nóng lên?", a: ["Cơ năng chuyển thành nhiệt năng", "Hóa năng chuyển thành nhiệt năng", "Điện năng từ người phát ra", "Do máu lưu thông nhanh"], c: 0, r: "Chuyển động chà xát tạo ra ma sát và sinh nhiệt.", h: "Sự chuyển hóa từ chuyển động sang sức nóng." }
+            ],
+            // True/False (8 items)
+            tf: [
+                { id: 25, level: "Biết", q: "Xét các phát biểu sau về các dạng năng lượng:", 
+                  options: [
+                      { t: "Cơ năng bao gồm động năng và thế năng.", result: true },
+                      { t: "Chỉ những vật nóng mới có nhiệt năng.", result: false },
+                      { t: "Năng lượng âm thanh có thể truyền được trong chân không.", result: false },
+                      { t: "Năng lượng không tự sinh ra cũng không tự mất đi.", result: true }
+                  ], r: "Nhiệt năng có ở mọi vật; âm thanh cần môi trường truyền dẫn; định luật bảo toàn năng lượng luôn đúng.", h: "Nhớ lại các đặc điểm cơ bản của nhiệt và âm." },
+                { id: 26, level: "Hiểu", q: "Một quả bóng tennis được ném lên cao theo phương thẳng đứng. Trong quá trình bay lên:",
+                  options: [
+                      { t: "Động năng của quả bóng tăng dần.", result: false },
+                      { t: "Thế năng hấp dẫn của quả bóng tăng dần.", result: true },
+                      { t: "Tốc độ của quả bóng giảm dần.", result: true },
+                      { t: "Tổng cơ năng của bóng (bỏ qua ma sát) không đổi.", result: true }
+                  ], r: "Khi lên cao, tốc độ giảm nên động năng giảm, độ cao tăng nên thế năng tăng.", h: "Càng lên cao vật càng chậm lại." },
+                { id: 27, level: "Vận dụng", q: "Một con lắc lò xo đang dao động trên mặt phẳng nằm ngang:",
+                  options: [
+                      { t: "Khi lò xo bị nén cực đại, thế năng đàn hồi là lớn nhất.", result: true },
+                      { t: "Tại vị trí lò xo không biến dạng, động năng là nhỏ nhất.", result: false },
+                      { t: "Năng lượng của con lắc chỉ tồn tại dưới dạng nhiệt năng.", result: false },
+                      { t: "Trong quá trình dao động có sự chuyển hóa giữa động năng và thế năng.", result: true }
+                  ], r: "Biến dạng cực đại thì thế năng cực đại; vị trí cân bằng tốc độ lớn nhất nên động năng lớn nhất.", h: "Sự trao đổi năng lượng giữa chuyển động và biến dạng." },
+                { id: 28, level: "Hiểu", q: "Về việc sử dụng năng lượng trong đời sống hàng ngày:",
+                    options: [
+                        { t: "Sử dụng đèn LED giúp tiết kiệm điện năng hơn đèn sợi đốt.", result: true },
+                        { t: "Xăng dầu là nguồn năng lượng hóa năng vô tận.", result: false },
+                        { t: "Điện năng có thể chuyển hóa hoàn toàn thành nhiệt năng.", result: true },
+                        { t: "Sử dụng năng lượng mặt trời gây ô nhiễm môi trường nặng nề.", result: false }
+                    ], r: "Xăng dầu là năng lượng hóa thạch hữu hạn; năng lượng mặt trời là năng lượng sạch.", h: "Năng lượng tái tạo và hiệu quả sử dụng điện." }
+            ],
+            // Short Answer (8 items)
+            short: [
+                { id: 29, level: "Vận dụng", q: "Một vật có khối lượng 2 kg đang ở độ cao 10 m so với mặt đất. Lấy $g = 10 m/s^2$. Thế năng hấp dẫn của vật là bao nhiêu Joule?", a: "200", r: "$W_t = m \times g \times h = 2 \times 10 \times 10 = 200$ J.", h: "Sử dụng công thức tính thế năng hấp dẫn." },
+                { id: 30, level: "Vận dụng", q: "Trong một thiết bị, hóa năng cung cấp là 500 J, máy tạo ra 400 J cơ năng có ích. Lượng nhiệt năng hao phí là bao nhiêu Joule?", a: "100", r: "$Hao phí = Tổng - Có ích = 500 - 400 = 100$ J.", h: "Áp dụng định luật bảo toàn năng lượng." },
+                { id: 31, level: "Hiểu", q: "Một nhóm học sinh nhận định về thế năng trọng trường như sau:\n1. Phụ thuộc vào khối lượng.\n2. Phụ thuộc vào tốc độ.\n3. Phụ thuộc độ cao.\n4. Đơn vị là Newton.\nChọn các nhận định ĐÚNG rồi ghi đáp án bằng một dãy số tăng dần từ nhỏ đến lớn.", a: "13", r: "Thế năng trọng trường phụ thuộc vào khối lượng và độ cao, đơn vị là Joule.", h: "Xem lại công thức $W_t = m.g.h$" },
+                { id: 32, level: "Vận dụng", q: "Năng lượng hao phí thường xuất hiện dưới dạng nhiệt năng hoặc âm thanh. Nếu một bóng đèn điện tiêu thụ 100 J điện năng, tỏa ra 90 J nhiệt. Năng lượng ánh sáng hữu ích là bao nhiêu Joule?", a: "10", r: "Phần còn lại sau khi trừ hao phí nhiệt là quang năng.", h: "Lấy tổng năng lượng trừ đi phần hao phí." }
+            ]
+        };
+
+        let currentQuestionIndex = 0;
+        let selectedQuestions = [];
+        let userProfile = { name: '', sbd: '', class: '' };
+        let timerInterval;
+        let timeLeft = 180;
+        let history = [];
+        let currentScore = 0;
+        let userAnswers = [];
+
+        // Sound controller
+        function playSfx(id) {
+            const sound = document.getElementById('audio-' + id);
+            sound.currentTime = 0;
+            sound.play();
+        }
+
+        // Initialize score board
+        function renderScoreBoard() {
+            const board = document.getElementById('score-board');
+            board.innerHTML = SCORE_LEVELS.map(level => `
+                <div id="score-q-${level.q}" class="money-item ${level.color || ''}">
+                    ${level.q}: ${level.points}
+                </div>
+            `).join('');
+        }
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function prepareQuestions() {
+            // Lấy 12 câu MCQ (5 Biết, 5 Hiểu, 2 Vận dụng)
+            let b_mcq = shuffle(QUESTION_POOL.mcq.filter(q => q.level === "Biết")).slice(0, 5);
+            let h_mcq = shuffle(QUESTION_POOL.mcq.filter(q => q.level === "Hiểu")).slice(0, 5);
+            let v_mcq = shuffle(QUESTION_POOL.mcq.filter(q => q.level === "Vận dụng")).slice(0, 2);
+            
+            // Lấy 4 câu TF (Vận dụng/Hiểu)
+            let tf_qs = shuffle(QUESTION_POOL.tf).slice(0, 4);
+            
+            // Lấy 4 câu Short (Vận dụng)
+            let short_qs = shuffle(QUESTION_POOL.short).slice(0, 4);
+
+            selectedQuestions = [...b_mcq, ...h_mcq, ...v_mcq, ...tf_qs, ...short_qs];
+        }
+
+        function startGame() {
+            const name = document.getElementById('input-name').value;
+            const sbd = document.getElementById('input-sbd').value;
+            const cls = document.getElementById('input-class').value;
+
+            if(!name || !sbd || !cls) {
+                alert("Vui lòng nhập đầy đủ thông tin thí sinh!");
+                return;
+            }
+
+            userProfile = { name, sbd, class: cls };
+            document.getElementById('display-info').innerText = `${name} - SBD: ${sbd} - ${cls}`;
+            
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-header').classList.remove('hidden');
+            document.getElementById('game-play').classList.remove('hidden');
+            
+            document.getElementById('audio-bg').play();
+            
+            prepareQuestions();
+            currentQuestionIndex = 0;
+            renderScoreBoard();
+            showQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 180;
+            const timerDisplay = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft + 's';
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleWrongAnswer("Hết thời gian!");
+                }
+            }, 1000);
+        }
+
+        function showQuestion() {
+            startTimer();
+            const qData = selectedQuestions[currentQuestionIndex];
+            const qText = document.getElementById('question-text');
+            const answersCont = document.getElementById('answers-container');
+            const shortCont = document.getElementById('short-answer-container');
+            const tfSubmit = document.getElementById('tf-submit-container');
+            const hintBox = document.getElementById('hint-box');
+            
+            hintBox.classList.add('hidden');
+            qText.innerText = `Câu ${currentQuestionIndex + 1}: ${qData.q}`;
+            answersCont.innerHTML = '';
+            shortCont.classList.add('hidden');
+            tfSubmit.classList.add('hidden');
+
+            // Highlight score board
+            document.querySelectorAll('.money-item').forEach(el => el.classList.remove('money-active'));
+            document.getElementById(`score-q-${currentQuestionIndex + 1}`).classList.add('money-active');
+
+            if(qData.a && Array.isArray(qData.a)) {
+                // MCQ
+                let options = qData.a.map((text, i) => ({ text, isCorrect: i === qData.c }));
+                shuffle(options);
+                options.forEach((opt, idx) => {
+                    const letter = ['A', 'B', 'C', 'D'][idx];
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-answer p-4 rounded-lg text-left text-xl flex items-center gap-4';
+                    btn.innerHTML = `<span class="text-yellow-400 font-bold">${letter}.</span> <span>${opt.text}</span>`;
+                    btn.onclick = () => checkMcq(opt, btn);
+                    answersCont.appendChild(btn);
+                });
+            } else if(qData.options) {
+                // True/False
+                tfSubmit.classList.remove('hidden');
+                const btnSubmit = document.getElementById('btn-submit-tf');
+                btnSubmit.disabled = true;
+                btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+
+                qData.tempAnswers = new Array(4).fill(null);
+
+                qData.options.forEach((opt, i) => {
+                    const row = document.createElement('div');
+                    row.className = 'bg-blue-800 p-3 rounded flex justify-between items-center mb-2';
+                    row.innerHTML = `
+                        <div class="flex-grow text-lg">${['a', 'b', 'c', 'd'][i]}) ${opt.t}</div>
+                        <div class="flex gap-2">
+                            <button class="ds-btn ds-true" onclick="selectTf(${i}, true, this)">Đúng</button>
+                            <button class="ds-btn ds-false" onclick="selectTf(${i}, false, this)">Sai</button>
+                        </div>
+                    `;
+                    answersCont.appendChild(row);
+                });
+            } else {
+                // Short Answer
+                shortCont.classList.remove('hidden');
+                document.getElementById('short-input').value = '';
+            }
+            
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+
+        // Help Actions
+        function help5050() {
+            const qData = selectedQuestions[currentQuestionIndex];
+            if(!qData.a) return; // Only for MCQ
+            playSfx('click');
+            const buttons = document.querySelectorAll('.btn-answer');
+            let removed = 0;
+            buttons.forEach((btn, idx) => {
+                const text = btn.innerText.split('. ')[1];
+                if(text !== qData.a[qData.c] && removed < 2) {
+                    btn.style.visibility = 'hidden';
+                    removed++;
+                }
+            });
+            document.getElementById('help-5050').disabled = true;
+            document.getElementById('help-5050').style.opacity = '0.3';
+        }
+
+        function helpPhone() {
+            const qData = selectedQuestions[currentQuestionIndex];
+            playSfx('click');
+            const hintBox = document.getElementById('hint-box');
+            document.getElementById('hint-text').innerText = "Người thân gợi ý: " + qData.h;
+            hintBox.classList.remove('hidden');
+            document.getElementById('help-phone').disabled = true;
+            document.getElementById('help-phone').style.opacity = '0.3';
+        }
+
+        function helpAudience() {
+            const qData = selectedQuestions[currentQuestionIndex];
+            playSfx('click');
+            const hintBox = document.getElementById('hint-box');
+            document.getElementById('hint-text').innerText = "Khán giả khuyên bạn: " + qData.r.split('.')[0] + "...";
+            hintBox.classList.remove('hidden');
+            document.getElementById('help-audience').disabled = true;
+            document.getElementById('help-audience').style.opacity = '0.3';
+        }
+
+        // Logic Checkers
+        function selectTf(idx, val, btn) {
+            playSfx('click');
+            const qData = selectedQuestions[currentQuestionIndex];
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.ds-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            qData.tempAnswers[idx] = val;
+
+            if(qData.tempAnswers.every(a => a !== null)) {
+                const submitBtn = document.getElementById('btn-submit-tf');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function checkMcq(opt, btn) {
+            clearInterval(timerInterval);
+            playSfx('click');
+            btn.classList.add('btn-selected');
+            
+            setTimeout(() => {
+                if(opt.isCorrect) {
+                    btn.classList.replace('btn-selected', 'btn-correct');
+                    handleCorrectAnswer(opt.text);
+                } else {
+                    btn.classList.replace('btn-selected', 'btn-wrong');
+                    handleWrongAnswer(opt.text);
+                }
+            }, 1000);
+        }
+
+        function submitTrueFalse() {
+            clearInterval(timerInterval);
+            const qData = selectedQuestions[currentQuestionIndex];
+            let isAllCorrect = true;
+            qData.options.forEach((opt, i) => {
+                if(opt.result !== qData.tempAnswers[i]) isAllCorrect = false;
+            });
+
+            if(isAllCorrect) handleCorrectAnswer("Đúng tất cả các ý");
+            else handleWrongAnswer("Sai một số ý");
+        }
+
+        function submitShortAnswer() {
+            clearInterval(timerInterval);
+            const val = document.getElementById('short-input').value.trim().replace('.', ',');
+            const qData = selectedQuestions[currentQuestionIndex];
+            
+            if(val === qData.a) handleCorrectAnswer(val);
+            else handleWrongAnswer(val);
+        }
+
+        function handleCorrectAnswer(userChoice) {
+            playSfx('correct');
+            const qData = selectedQuestions[currentQuestionIndex];
+            history.push({ q: qData.q, user: userChoice, correct: true, explanation: qData.r });
+            
+            currentQuestionIndex++;
+            if(currentQuestionIndex >= 20) {
+                endGame(10);
+            } else {
+                setTimeout(showQuestion, 1500);
+            }
+        }
+
+        function handleWrongAnswer(userChoice) {
+            playSfx('wrong');
+            const qData = selectedQuestions[currentQuestionIndex];
+            history.push({ q: qData.q, user: userChoice, correct: false, explanation: qData.r });
+            
+            // Calculate safety points
+            let finalPoints = 0;
+            if (currentQuestionIndex < 5) finalPoints = 0;
+            else if (currentQuestionIndex < 10) finalPoints = 5;
+            else finalPoints = 8;
+
+            endGame(finalPoints);
+        }
+
+        function endGame(points) {
+            clearInterval(timerInterval);
+            document.getElementById('audio-bg').pause();
+            document.getElementById('game-play').classList.add('hidden');
+            document.getElementById('game-header').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            let rank = points >= 10 ? "Xuất sắc" : (points >= 8 ? "Tốt" : "Khá");
+            if (points < 5) rank = "Cần cố gắng";
+
+            document.getElementById('result-info').innerHTML = `
+                <p>Thí sinh: <b>${userProfile.name}</b> - SBD: <b>${userProfile.sbd}</b></p>
+                <p>Lớp: <b>${userProfile.class}</b></p>
+                <p class="text-3xl text-yellow-400 mt-4">Điểm số: ${points}</p>
+                <p class="text-2xl mt-2">Xếp loại: ${rank}</p>
+                <p class="mt-4 italic text-gray-300">Bạn có thể làm lại để khẳng định đẳng cấp của mình.</p>
+            `;
+        }
+
+        function showHistory() {
+            const cont = document.getElementById('history-container');
+            cont.classList.toggle('hidden');
+            cont.innerHTML = history.map((item, i) => `
+                <div class="history-card">
+                    <p class="font-bold">Câu ${i+1}: ${item.q}</p>
+                    <p>Bạn chọn: <span class="${item.correct ? 'text-green-600' : 'text-red-600'}">${item.user}</span></p>
+                    <p class="mt-2 text-sm text-gray-700"><b>Phân tích:</b> ${item.explanation}</p>
+                </div>
+            `).join('');
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+
+        function restartGame() {
+            history = [];
+            currentQuestionIndex = 0;
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('history-container').classList.add('hidden');
+            
+            // Reset help buttons
+            ['5050', 'phone', 'audience'].forEach(h => {
+                const b = document.getElementById('help-' + h);
+                b.disabled = false;
+                b.style.opacity = '1';
+            });
+
+            startGame(); // Bắt đầu lại với thông tin cũ
+        }
+    </script>
+</body>
+</html>
+ 1. Add capacity of pasting multiline into Find/Replace fields.
+ 2. Improve UAC in Notepad++ for seamless elevated operations.
+ 3. Fix Pin Tab operation being too long with many opened documents.
+ 4. Add 2 new full-readonly modes via command line argument (-fullReadOnly & -fullReadOnlySavingForbidden).
+ 5. Add apply/remove read-only for all documents commands.
+ 6. Column Editor enhancement: GUI input fields now support radix to match the output format.
+ 7. Add Window dialog "File Modified Time" sorting capacity.
+ 8. Fix NPPN_CMDLINEPLUGINMSG not working issue & define the pluginMessage usage protocol.
+ 9. Fix pasting from column mode to multi-selection issue due to different EOL.
+10. Add NPPM_GETNPPSETTINGSDIRPATH message to get Notepad++ settings directory path.
+11. Enhance SQL function list parser.
+12. Fix C# function list not working with comments.
+13. Add function list ability for CSS.
+14. Allow user to customize max selected chars to auto-fill "Find what" field.
+15. Restore undo/redo behaviour in Find/Replace fields after Copy/Paste or Ctrl-F.
+16. Fix text corruption issue caused by selection within multibyte characters.
+17. Fix DOCTYPE styling in xml and html.
+18. Fix double clicking on edit zone border creates a new tab issue.
+19. Update cURL in WinGUp (Notepad++ updater) for fixing security issue CVE-2025-5399.
+
+
+Get more info on
+https://notepad-plus-plus.org/downloads/v8.8.7/
+
+
+Included plugins:
+
+ 1.  NppExport v0.4
+ 2.  Converter v4.7
+ 3.  Mime Tool v3.1
+
+
+Updater (Installer only):
+
+* WinGUp (for Notepad++) v5.3.5
