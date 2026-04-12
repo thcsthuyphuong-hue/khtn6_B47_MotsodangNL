@@ -31,9 +31,9 @@
             border-radius: 24px;
         }
         
-        /* Đồng bộ Font Size 13pt theo yêu cầu của Thầy */
+        /* Đồng bộ Font Size 14pt theo yêu cầu của Thầy */
         #q-text, .option-btn, #q-number, #q-score-ui, .tf-btn, .info-label, .summary-text, .ms-text, .label-header { 
-            font-size: 13pt !important; 
+            font-size: 14pt !important; 
             font-weight: 700; 
         }
 
@@ -74,16 +74,17 @@
         .exam-node.current { border: 2px solid #ffc300; color: #ffc300; }
 
         .digit-box { width: 36px; height: 48px; background: #001d3d; border: 2px solid #ffc300; border-radius: 10px; text-align: center; font-size: 20px; font-weight: 900; color: #fff; outline: none; }
-        .tf-btn { font-size: 13pt !important; padding: 2px 6px; border-radius: 6px; font-weight: 900; min-width: 42px; line-height: 1.2; }
+        .tf-btn { font-size: 13pt !important; padding: 2px 6px; border-radius: 6px; font-weight: 900; min-width: 45px; line-height: 1.2; }
 
         .avatar-corner { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #ffc300; overflow: hidden; background: #1e293b; }
         
         .fixed-copyright-footer { position: absolute; bottom: 0; width: 100%; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); border-top: 1px solid rgba(255,255,255,0.1); z-index: 5000; pointer-events: none; }
         .footer-text { font-size: 8px; color: rgba(255,255,255,0.4); text-transform: uppercase; text-align: center; }
 
-        #scratch-container { position: relative; width: 260px; height: 130px; margin: 15px auto; background: #fff; border-radius: 16px; overflow: hidden; border: 4px solid #ffc300; }
-        #scratch-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; touch-action: none; z-index: 10; }
-        .scratch-content { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: black; }
+        /* Vùng cào điểm số phủ lên bảng vinh danh */
+        #scratch-card-wrapper { position: relative; width: 100%; max-width: 350px; margin: 15px auto; border-radius: 35px; overflow: hidden; }
+        #scratch-canvas { position: absolute; top: 0; left: 0; z-index: 20; cursor: crosshair; touch-action: none; width: 100%; height: 100%; border-radius: 35px; }
+        #result-info-box { position: relative; z-index: 10; width: 100%; opacity: 0; /* Hiện rõ dần khi cào */ }
 
         #modal-delete-confirm { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; padding: 20px; }
         .delete-box { background: #1e293b; border: 4px solid #ef4444; padding: 25px; border-radius: 24px; width: 100%; max-width: 320px; text-align: center; }
@@ -106,7 +107,7 @@
     <div id="screen-home" class="flex-1 flex flex-col p-5 items-center justify-center space-y-4 text-center overflow-y-auto">
         <div class="text-center">
             <h1 class="text-2xl font-black gold-text italic drop-shadow-lg uppercase">Ai Là Triệu Phú Edu 3.0</h1>
-          
+            <div class="bg-white text-blue-900 px-5 py-0.5 rounded-full font-black text-xs inline-block shadow-lg mt-1 tracking-widest uppercase"> Bài 47 Một số dạng năng lượng</div>
         </div>
 
         <div class="flex space-x-5 w-full justify-center">
@@ -129,11 +130,10 @@
         <div class="w-full space-y-2 glass p-5 rounded-[25px]">
             <input type="text" id="in-name" placeholder="Họ và tên" class="w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
             <input type="text" id="in-sbd" placeholder="Số báo danh" class="w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
-           <div class="grid grid-cols-3 gap-2">
-    <input type="text" id="in-class" placeholder="Lớp" class="w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
-    
-    <input type="text" id="in-school" placeholder="Trường" class="col-span-2 w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
-</div>
+            <div class="grid grid-cols-3 gap-2">
+                <input type="text" id="in-class" placeholder="Lớp" class="w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
+                <input type="text" id="in-school" placeholder="Trường" class="col-span-2 w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
+            </div>
         </div>
 
         <div class="w-full space-y-2">
@@ -184,7 +184,7 @@
                 </div>
                 <div id="q-text" class="glass p-4 rounded-xl text-white"></div>
                 <div id="q-options" class="grid grid-cols-1 gap-2"></div>
-                <div id="q-hint-box" class="hidden mt-4 p-4 bg-yellow-400/10 border border-yellow-400/30 rounded-2xl italic text-[10px] text-yellow-100 shadow-lg text-white"></div>
+                <div id="q-hint-box" class="hidden mt-4 p-4 bg-yellow-400/10 border border-yellow-400/30 rounded-2xl italic text-[10px] text-yellow-100 shadow-lg text-white font-black"></div>
                 <div class="h-32 shrink-0"></div>
             </div>
             <div id="right-panel">
@@ -195,7 +195,7 @@
             </div>
         </div>
 
-        <footer class="p-3 bg-black border-t border-white/10 flex items-center justify-between z-20">
+        <footer class="p-3 pb-8 bg-black border-t border-white/10 flex items-center justify-between z-20">
             <button id="btn-stop" onclick="window.confirmStop()" class="hidden bg-red-900/40 text-red-400 px-3 py-2 rounded-lg font-black text-[9px] uppercase border border-red-500/30">Dừng chơi</button>
             <div class="flex-1"></div>
             <button id="btn-next" onclick="window.nextQ()" class="hidden bg-green-600 text-white px-6 py-3 rounded-lg font-black text-xs uppercase shadow-lg text-white">Tiếp tục</button>
@@ -206,24 +206,23 @@
     <!-- MÀN HÌNH VINH DANH -->
     <div id="screen-result" class="hidden flex-1 flex flex-col items-center justify-center p-6 space-y-4 text-center overflow-y-auto">
         <h1 class="text-2xl font-black gold-text italic uppercase">AI LÀ TRIỆU PHÚ EDU 3.0</h1>
-        <div id="exam-scratch-area" class="hidden w-full">
-            <p class="text-yellow-400 font-black mb-2 animate-bounce uppercase text-[10px]">Hãy cào để biết kết quả!</p>
-            <div id="scratch-container">
-                <div class="scratch-content">
-                    <span id="scratch-score-ui" class="text-6xl font-black text-red-600 opacity-0 transition-opacity">0.0</span>
-                    <span class="text-[10px] font-bold text-slate-500 uppercase">ĐIỂM SỐ</span>
+        
+        <p id="scratch-msg" class="hidden text-yellow-400 font-black mb-2 animate-bounce uppercase text-[10px]">Hãy cào để biết kết quả!</p>
+        
+        <div id="scratch-card-wrapper" class="hidden">
+            <!-- Bảng kết quả nằm bên dưới lớp cào -->
+            <div id="result-info-box" class="glass p-6 rounded-[35px] w-full border-2 border-white/10 shadow-2xl">
+                <div id="res-summary" class="summary-text mb-3 leading-relaxed text-white"></div>
+                <div id="simple-score-view" class="relative inline-block">
+                    <span id="res-score" class="text-7xl font-black text-yellow-400 font-black">0.0</span>
+                    <span class="absolute -top-2 -right-4 bg-red-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase text-white font-black">Điểm</span>
                 </div>
-                <canvas id="scratch-canvas"></canvas>
+                <div id="res-rank" class="mt-4 gold-text font-black text-xl uppercase text-center"></div>
             </div>
+            <!-- Lớp phủ Canvas cào bạc -->
+            <canvas id="scratch-canvas"></canvas>
         </div>
-        <div id="result-info-box" class="glass p-6 rounded-[35px] w-full border-2 border-white/10 shadow-2xl opacity-0">
-            <div id="res-summary" class="summary-text mb-3 leading-relaxed text-white"></div>
-            <div id="simple-score-view" class="relative inline-block">
-                <span id="res-score" class="text-7xl font-black text-yellow-400 font-black">0.0</span>
-                <span class="absolute -top-2 -right-4 bg-red-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase text-white font-black">Điểm</span>
-            </div>
-            <div id="res-rank" class="mt-4 gold-text font-black text-xl uppercase text-center"></div>
-        </div>
+
         <button id="btn-show-hist" onclick="window.showHistory()" class="hidden w-full bg-blue-700 p-4 rounded-[20px] font-black text-sm shadow-xl uppercase text-white font-black">Sổ tay tri thức</button>
         <button onclick="location.reload()" class="w-full bg-slate-800 p-4 rounded-[20px] font-black text-sm shadow-xl uppercase text-white font-black">Về trang chủ</button>
     </div>
@@ -234,7 +233,7 @@
             <h2 class="font-black text-blue-900 uppercase text-xs">HỆ THỐNG QUẢN TRỊ</h2>
             <button onclick="location.reload()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[9px] font-black shadow-lg">THOÁT</button>
         </div>
-        <div class="grid grid-cols-2 gap-2 mb-4">
+        <div class="grid grid-cols-2 gap-3 mb-4">
             <button onclick="window.exportExcel()" class="bg-emerald-600 text-white py-3 rounded-lg font-black text-[9px] uppercase shadow-md text-white font-black">📊 XUẤT EXCEL (*.xlsx)</button>
             <button onclick="window.showStats()" class="bg-indigo-600 text-white py-3 rounded-lg font-black text-[9px] uppercase shadow-md text-white font-black text-white">📈 THỐNG KÊ BIỂU ĐỒ</button>
         </div>
@@ -271,7 +270,7 @@
     <div id="modal-login" class="hidden fixed inset-0 z-[100] bg-black/98 flex items-center justify-center p-8 text-black">
         <div class="bg-slate-900 border-2 border-yellow-500/50 p-8 rounded-[40px] w-full max-w-xs text-center text-white">
             <h3 class="gold-text font-black text-lg mb-6 uppercase text-center font-black">Xác thực Admin</h3>
-            <input type="password" id="admin-pass" placeholder="********" class="w-full p-3 bg-white/5 rounded-xl border border-white/20 mb-6 text-center text-white outline-none">
+            <input type="password" id="admin-pass" placeholder="********" class="w-full p-3 bg-white/5 rounded-xl border border-red-500/30 mb-6 text-center text-white outline-none">
             <div class="flex space-x-3">
                 <button onclick="window.hideModal('modal-login')" class="flex-1 bg-slate-700 p-2 rounded-lg font-bold text-white uppercase text-xs">Hủy</button>
                 <button onclick="window.checkAdmin()" class="flex-1 bg-yellow-500 text-black py-2 rounded-lg font-black uppercase text-xs text-white">Vào</button>
@@ -280,13 +279,13 @@
     </div>
 
     <div id="modal-rules" class="hidden fixed inset-0 z-[4000] bg-black/98 flex items-center justify-center p-6 text-white text-center">
-        <div class="bg-blue-900 border-4 border-yellow-500 p-6 rounded-[35px] w-full max-w-sm shadow-2xl text-white">
+        <div class="bg-blue-900 border-4 border-yellow-500 p-6 rounded-[35px] w-full max-sm shadow-2xl text-white">
             <h3 class="gold-text font-black text-xl mb-4 uppercase italic text-center"> THỂ LỆ TRÒ CHƠI AI LÀ TRIỆU PHÚ EDU 3.0</h3>
             <div class="text-xs space-y-3 h-[40vh] overflow-y-auto pr-2 leading-relaxed font-medium text-left">
-                <p>1. Chào mừng các em đến với trò chơi Ai là triệu phú phiên bản giáo dục – Khoa học tự nhiên 6. Người chơi sẽ lần lượt chinh phục 20 câu hỏi với độ khó tăng dần. Mỗi câu hỏi có tối đa 180 giây để trả lời. </p>
-                <p>2. Chế độ Luyện tập & Ghế nóng: Sai 1 câu dừng chơi ngay. Có 3 quyền trợ giúp: 50:50 (chỉ áp dụng từ câu 1 đến câu 12); Hỏi ý kiến khán giả; Gọi điện cho người thân; Từ câu hỏi thứ 13, có thêm quyền trợ giúp: hỏi ý kiến chuyên gia. </p>
-                <p>3. KIỂM TRA: Phải làm đủ 20 câu mới được nộp bài.</p>
-				<p>4. Ở chế độ KIỂM TRA và NGỒI VÀO GHẾ NÓNG: Tuyệt đối không được chuyển tab, hoặc chuyển sang màn hình khác, nếu vi phạm, hệ thống sẽ tự động thu bài.</p>
+                <p>1. Chinh phục 20 câu hỏi (12 Trắc nghiệm, 4 Đúng/Sai, 4 Trả lời ngắn).</p>
+                <p>2. Chế độ Luyện tập & Ghế nóng: Sai 1 câu dừng cuộc chơi ngay. Có 3 quyền trợ giúp: 50:50 (chỉ áp dụng từ câu 1 đến câu 12); Hỏi ý kiến khán giả; Gọi điện cho người thân; Từ câu hỏi thứ 13, có thêm quyền trợ giúp: hỏi ý kiến chuyên gia. </p>
+                <p>3. Nếu chọn KIỂM TRA: Phải làm đủ 20 câu mới được nộp bài.</p>
+                <p>4. Ở chế độ KIỂM TRA và NGỒI VÀO GHẾ NÓNG: Tuyệt đối không chuyển tab, hoặc chuyển sang màn hình khác, nếu vi phạm, hệ thống sẽ tự động thu bài.</p>
             </div>
             <button onclick="window.hideModal('modal-rules')" class="w-full mt-6 bg-yellow-500 text-black py-3 rounded-xl font-black shadow-xl uppercase font-black text-sm">Đóng</button>
         </div>
@@ -297,14 +296,14 @@
             <h3 class="text-xl font-black text-blue-900 uppercase italic text-center">Sổ tay tri thức</h3>
             <button onclick="window.hideModal('modal-history')" class="bg-red-600 text-white px-6 py-2 rounded-full font-black text-xs uppercase shadow-lg text-white font-black">Đóng</button>
         </div>
-        <div id="history-list" class="space-y-10 pb-20"></div>
+        <div id="history-list" class="space-y-10 pb-20 text-left"></div>
     </div>
 
     <div id="milestone-modal" class="hidden milestone-modal">
         <div class="milestone-box text-white">
-            <div class="milestone-title font-black text-white text-[16pt]">AI LÀ TRIỆU PHÚ EDU 3.0 CHÚC MỪNG BẠN!</div>
+            <div class="milestone-title font-black text-white text-[16pt] uppercase mb-2">Chúc Mừng Bạn!</div>
             <div id="ms-text" class="ms-text mb-8 leading-relaxed font-black text-white"></div>
-            <button onclick="window.closeMilestone()" class="bg-yellow-500 text-black px-12 py-4 rounded-full font-black text-xl shadow-2xl uppercase font-black text-white">Tiếp tục hành trình</button>
+            <button onclick="window.closeMilestone()" class="bg-yellow-500 text-black px-12 py-4 rounded-full font-black text-xl shadow-2xl uppercase font-black text-white font-black">Tiếp tục hành trình</button>
         </div>
     </div>
 
@@ -355,7 +354,7 @@
         });
     }
 
-     // --- NGÂN HÀNG CÂU HỎI BÀI 47: MỘT SỐ DẠNG NĂNG LƯỢNG ---
+    // // --- NGÂN HÀNG CÂU HỎI BÀI 47: MỘT SỐ DẠNG NĂNG LƯỢNG ---
 
 const BANK_MCQ = [
     {id: "47.1", q: "Dạng năng lượng nào sau đây có trong pin, ắc quy hoặc trong các loại thực phẩm?", a: ["Nhiệt năng.", "Điện năng.", "Hóa năng.", "Quang năng."], c: 2, ex: "Hóa năng là dạng năng lượng dự trữ trong các liên kết hóa học của thức ăn và các thiết bị lưu trữ như pin."},
@@ -500,41 +499,74 @@ const BANK_SHORT = [
         state_data.isOver = true; clearInterval(state_data.timerRef);
         document.getElementById('screen-game')?.classList.add('hidden');
         document.getElementById('screen-result')?.classList.remove('hidden');
-        if(state_data.mode === 'KIEM_TRA') {
-            state_data.score = state_data.userAnswers.reduce((sum, item) => sum + (item ? item.earned : 0), 0);
-            document.getElementById('exam-scratch-area')?.classList.remove('hidden');
-            initScratchCard();
-        } else document.getElementById('result-info-box').style.opacity = "1";
+        
+        const isEx = state_data.mode === 'KIEM_TRA';
+        if(isEx) state_data.score = state_data.userAnswers.reduce((sum, item) => sum + (item ? item.earned : 0), 0);
+        
         const final = Math.min(10.0, Math.round(state_data.score * 10) / 10);
-        document.getElementById('res-score').innerText = final.toFixed(1);
-        document.getElementById('scratch-score-ui').innerText = final.toFixed(1);
+        const resScore = document.getElementById('res-score');
+        if(resScore) resScore.innerText = final.toFixed(1);
+        
+        const resRank = document.getElementById('res-rank');
         let rank = final >= 9 ? "XUẤT SẮC" : (final >= 8 ? "TỐT" : (final >= 5 ? "KHÁ" : (final >= 3.5 ? "ĐẠT" : "CHƯA ĐẠT")));
-        document.getElementById('res-rank').innerText = rank;
-        document.getElementById('res-summary').innerHTML = `Chúc mừng Triệu phú tri thức <b>${state_data.user.name}</b>, SBD: ${state_data.user.sbd}, lớp ${state_data.user.class}, trường ${state_data.user.school}, ${final.toFixed(1)} điểm, xếp loại ${rank}.`;
-        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'results'), { ...state_data.user, score: final, mode: state_data.mode, duration: Math.floor((new Date() - state_data.startTime) / 1000), timestamp: serverTimestamp() });
-        document.getElementById('btn-show-hist')?.classList.remove('hidden');
+        if(resRank) resRank.innerText = rank;
+        
+        const resSum = document.getElementById('res-summary');
+        if(resSum) resSum.innerHTML = `Chúc mừng Triệu phú tri thức <b>${state_data.user.name}</b>, SBD: ${state_data.user.sbd}, lớp ${state_data.user.class}, trường ${state_data.user.school}, ${final.toFixed(1)} điểm, xếp loại ${rank}.`;
+        
+        if(isEx) {
+            document.getElementById('scratch-msg').classList.remove('hidden');
+            document.getElementById('scratch-card-wrapper').classList.remove('hidden');
+            initScratchCard();
+        } else {
+            document.getElementById('scratch-card-wrapper').classList.remove('hidden');
+            document.getElementById('result-info-box').style.opacity = "1";
+            document.getElementById('btn-show-hist')?.classList.remove('hidden');
+            const canvas = document.getElementById('scratch-canvas');
+            if(canvas) canvas.style.display = 'none';
+        }
+
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'results'), { 
+            ...state_data.user, 
+            score: final, 
+            mode: state_data.mode, 
+            duration: Math.floor((new Date() - state_data.startTime) / 1000), 
+            timestamp: serverTimestamp() 
+        });
     }
 
     function initScratchCard() {
+        const wrapper = document.getElementById('scratch-card-wrapper');
         const canvas = document.getElementById('scratch-canvas');
-        if(!canvas) return;
+        const infoBox = document.getElementById('result-info-box');
+        if(!canvas || !infoBox) return;
+        
+        infoBox.style.opacity = "0";
         const ctx = canvas.getContext('2d');
-        canvas.width = 280; canvas.height = 140;
-        ctx.fillStyle = '#94a3b8'; ctx.fillRect(0, 0, 280, 140);
-        ctx.font = '700 16px Roboto'; ctx.fillStyle = '#1e293b'; ctx.textAlign = 'center';
-        ctx.fillText('CÀO ĐỂ XEM ĐIỂM SỐ', 140, 75);
+        const rect = infoBox.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        
+        ctx.fillStyle = '#94a3b8'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.font = 'bold 16px Roboto'; ctx.fillStyle = '#1e293b'; ctx.textAlign = 'center';
+        ctx.fillText('CÀO ĐỂ XEM ĐIỂM SỐ', canvas.width/2, canvas.height/2 + 5);
+
         let drawing = false;
         const totalPixels = canvas.width * canvas.height;
+
         const scratch = (e) => {
             if(!drawing) return;
             const r = canvas.getBoundingClientRect();
-            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - r.left, y = (e.clientY || (e.touches && e.touches[0].clientY)) - r.top;
-            ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.arc(x, y, 22, 0, 6.3); ctx.fill();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - r.left;
+            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - r.top;
+            ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.arc(x, y, 25, 0, 6.3); ctx.fill();
+            
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             let count = 0; for(let i = 3; i < imageData.data.length; i += 4) { if(imageData.data[i] === 0) count++; }
             const ratio = count / totalPixels;
-            document.getElementById('result-info-box').style.opacity = Math.min(1, ratio * 2.8);
-            document.getElementById('scratch-score-ui').style.opacity = Math.min(1, ratio * 3.5);
+            
+            infoBox.style.opacity = Math.min(1, ratio * 2);
+            if(ratio > 0.45) document.getElementById('btn-show-hist')?.classList.remove('hidden');
         };
         canvas.addEventListener('mousedown', () => drawing = true);
         canvas.addEventListener('mouseup', () => drawing = false);
@@ -572,12 +604,21 @@ const BANK_SHORT = [
         startGame: (mode) => {
             playPing();
             const n = document.getElementById('in-name').value, s = document.getElementById('in-sbd').value, c = document.getElementById('in-class').value, sc = document.getElementById('in-school').value;
-            if (!n || !s || !c || !sc) return alert("Nhập đủ thông tin em nhé!");
+            if (!n || !s || !c || !sc) return alert("Em hãy nhập đủ thông tin nhé!");
             state_data.user = { name: n, sbd: s, class: c, school: sc, mcImg: document.getElementById('view-mc').src, playerImg: document.getElementById('view-player').src };
             localStorage.setItem('mil_v3_user_save_pro', JSON.stringify(state_data.user));
             state_data.mode = mode; state_data.startTime = new Date(); state_data.userAnswers = Array(20).fill(null); state_data.currentIdx = 0; state_data.score = 0;
             const q1 = shuffleArray([...BANK_MCQ]).slice(0, 12).map(q => { const o = q.a.map((v, i) => ({v, isCorrect: i === q.c})); shuffleArray(o); return {...q, a: o.map(x => x.v), c: o.findIndex(x => x.isCorrect)}; });
             state_data.questions = [...q1, ...shuffleArray([...BANK_TF]).slice(0, 4), ...shuffleArray([...BANK_SHORT]).slice(0, 4)];
+            
+            if (mode === 'KIEM_TRA' || mode === 'GHE_NONG') {
+                try {
+                    const d = document.documentElement;
+                    if(d.requestFullscreen) d.requestFullscreen().catch(()=>{});
+                    else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen().catch(()=>{});
+                } catch(e) {}
+            }
+
             document.getElementById('screen-home')?.classList.add('hidden');
             document.getElementById('screen-game')?.classList.remove('hidden');
             document.getElementById('ui-p-name').innerText = n; document.getElementById('ui-p-info').innerText = `${s} | ${c} | ${sc}`;
@@ -597,30 +638,39 @@ const BANK_SHORT = [
             if(type === '5050' && state_data.currentIdx < 12) {
                 const btns = document.querySelectorAll('.option-btn'); let count = 0;
                 [0,1,2,3].sort(()=>Math.random()-0.5).forEach(i => { if(i !== q.c && count < 2) { btns[i].style.visibility = 'hidden'; count++; } });
-            } else box.innerHTML = `<b class="text-yellow-400 uppercase text-[10pt]">Trợ giúp:</b><br>${q.ex}`;
+            } else {
+                const currentLetter = String.fromCharCode(65 + q.c);
+                const advice = q.ex.replace(/Phương án [A-D] ĐÚNG/g, `Phương án ${currentLetter} ĐÚNG`);
+                box.innerHTML = `<b class="text-yellow-400 uppercase text-[10pt]">Trợ giúp giáo khoa:</b><br>${advice}`;
+            }
         },
         setTF: (idx, val) => { playPing(); state_data.questions[state_data.currentIdx].userChoice[idx] = val; loadQ(); },
         submitAns: () => {
             playPing(); const q = state_data.questions[state_data.currentIdx]; let earned = 0, isCorrect = false;
+            const ladderScores = [1,2,3,4,5,5.4,5.8,6.2,6.6,7,7.3,7.6,7.9,8.2,8.5,8.8,9.1,9.4,9.7,10.0];
             if (state_data.currentIdx < 12) {
                 if (q.userChoice === undefined) return alert("Chọn đáp án!");
-                isCorrect = (q.userChoice === q.c); earned = isCorrect ? (state_data.mode === 'KIEM_TRA' ? 0.4 : (state_data.currentIdx < 5 ? 1 : 0.4)) : 0;
+                isCorrect = (q.userChoice === q.c);
+                earned = isCorrect ? (state_data.mode === 'KIEM_TRA' ? 0.4 : (ladderScores[state_data.currentIdx] - (state_data.currentIdx > 0 ? ladderScores[state_data.currentIdx-1] : 0))) : 0;
             } else if (state_data.currentIdx < 16) {
                 if (!q.userChoice || q.userChoice.includes(null)) return alert("Hãy hoàn thành đủ 4 ý!");
                 let hits = 0; q.userChoice.forEach((v, i) => { if(v === q.c[i]) hits++; });
-                earned = (state_data.mode === 'KIEM_TRA') ? [0, 0.2, 0.4, 0.6, 0.8][hits] : (hits === 4 ? 0.4 : 0); isCorrect = (hits === 4);
+                if (state_data.mode === 'KIEM_TRA') earned = [0, 0.2, 0.4, 0.6, 0.8][hits];
+                else earned = (hits === 4) ? (ladderScores[state_data.currentIdx] - (state_data.currentIdx > 0 ? ladderScores[state_data.currentIdx-1] : 0)) : 0;
+                isCorrect = (hits === 4);
             } else {
                 const val = Array.from(document.querySelectorAll('.digit-box')).map(i => i.value).join('').replace('.', ',');
                 if (!val) return alert("Hãy nhập kết quả!");
-                q.userVal = val; isCorrect = (val === q.c); earned = isCorrect ? (state_data.mode === 'KIEM_TRA' ? 0.5 : 0.15) : 0;
+                q.userVal = val; isCorrect = (val === q.c);
+                earned = isCorrect ? (state_data.mode === 'KIEM_TRA' ? 0.5 : (ladderScores[state_data.currentIdx] - (state_data.currentIdx > 0 ? ladderScores[state_data.currentIdx-1] : 0))) : 0;
             }
             state_data.userAnswers[state_data.currentIdx] = { earned, isCorrect, userChoice: q.userChoice, userVal: q.userVal };
             if (state_data.mode === 'KIEM_TRA') { if(state_data.currentIdx >= 19) finishGame(); else { state_data.currentIdx++; loadQ(); } }
             else { if (!isCorrect) { const btns = document.querySelectorAll('.option-btn'); if(btns[q.c])btns[q.c].classList.add('option-correct'); if(btns[q.userChoice])btns[q.userChoice].classList.add('option-wrong'); setTimeout(finishGame, 1500); } 
-                else { state_data.score = Math.min(10.0, state_data.score + earned); if(state_data.currentIdx === 19) finishGame(); else { 
+                else { state_data.score = ladderScores[state_data.currentIdx]; if(state_data.currentIdx === 19) finishGame(); else { 
                     if(state_data.currentIdx==4||state_data.currentIdx==9){
                         const h_txt = state_data.currentIdx==4?"Người thân & Khán giả":"Chuyên gia";
-                        document.getElementById('ms-text').innerHTML = `Vượt qua câu ${state_data.currentIdx+1}, bạn đạt ${state_data.score.toFixed(1)}đ và nhận trợ giúp ${h_txt}.`;
+                        document.getElementById('ms-text').innerHTML = `Vượt qua câu ${state_data.currentIdx+1}, bạn đã giành được ${state_data.score.toFixed(1)} điểm và nhận thêm sự trợ giúp từ ${h_txt}.`;
                         window.showModal('milestone-modal');
                     }
                     document.getElementById('btn-submit').classList.add('hidden'); document.getElementById('btn-next').classList.remove('hidden'); 
@@ -628,7 +678,10 @@ const BANK_SHORT = [
         },
         nextQ: () => { playPing(); if(state_data.currentIdx < 19) { state_data.currentIdx++; loadQ(); } },
         checkAdmin: () => { if(document.getElementById('admin-pass').value === '112233@@') { window.hideModal('modal-login'); showAdmin(); } else alert("Sai!"); },
-        exportExcel: () => { const ws = XLSX.utils.json_to_sheet(state_data.adminData.map((d, i) => ({ "STT": i+1, "SBD": d.sbd, "Họ Tên": d.name, "Lớp": d.class, "Trường": d.school, "Điểm": d.score, "Nộp Lúc": d.timeStr }))); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "KetQua"); XLSX.writeFile(wb, "ket_qua_edu30.xlsx"); },
+        exportExcel: () => { 
+            const dataToExport = state_data.adminData.map((d, i) => ({ "STT": i+1, "SBD": d.sbd, "Họ Tên": d.name, "Lớp": d.class, "Trường": d.school, "Chế độ": d.mode, "Điểm": d.score, "Thời gian làm bài (giây)": d.duration, "Nộp Lúc": d.timeStr }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "KetQua"); XLSX.writeFile(wb, "ket_qua_edu30.xlsx"); 
+        },
         deleteRes: (id) => { playPing(); state_data.targetDelId = id; document.getElementById('modal-delete-confirm').classList.remove('hidden'); },
         cancelDelete: () => { playPing(); document.getElementById('modal-delete-confirm').classList.add('hidden'); state_data.targetDelId = null; },
         confirmDelete: async () => { if(document.getElementById('delete-pass-input').value === 'Admin123@') { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'results', state_data.targetDelId)); window.cancelDelete(); showAdmin(); } else alert("Sai!"); },
@@ -636,11 +689,13 @@ const BANK_SHORT = [
             const list = document.getElementById('history-list'); if(!list) return; list.innerHTML = '';
             state_data.questions.forEach((q, i) => { const ua = state_data.userAnswers[i]; if(!ua) return;
                 const div = document.createElement('div'); div.className = `p-5 glass rounded-3xl border-l-8 ${ua.isCorrect ? 'border-green-500' : 'border-red-500'} mb-6 text-black bg-white shadow-lg text-left`;
+                const currentLetter = String.fromCharCode(65 + q.c);
+                const adviceFixed = q.ex.replace(/Phương án [A-D] ĐÚNG/g, `Phương án ${currentLetter} ĐÚNG`);
                 let h = `<div class="text-[9px] font-black uppercase mb-2 text-slate-400">CÂU ${i+1} (${ua.earned.toFixed(2)}đ)</div><div class="text-sm font-bold mb-4 text-left text-black font-black">${q.q}</div>`;
                 if (i < 12) h += `<div class="space-y-2">` + q.a.map((o, idx) => `<div class="p-3 rounded-xl border-2 ${idx === q.c ? 'bg-green-50 border-green-500' : (idx === ua.userChoice ? 'bg-red-50 border-red-500' : 'bg-slate-50')} text-xs font-bold text-left text-black font-black">${o}</div>`).join('') + `</div>`;
                 else if (i < 16) h += `<div class="space-y-2">` + q.items.map((it, idx) => `<div class="p-2 border-b text-xs ${ua.userChoice[idx] === q.c[idx] ? 'text-green-600' : 'text-red-600'} font-bold text-left font-black">${it} → <span class="uppercase">${ua.userChoice[idx]?'ĐÚNG':'SAI'}</span></div>`).join('') + `</div>`;
                 else h += `<div class="p-4 bg-slate-100 rounded-xl mb-4 text-xs font-black text-black text-left text-black font-black">BẠN NHẬP: ${ua.userVal} | ĐÁP ÁN: ${q.c}</div>`;
-                h += `<div class="p-3 bg-blue-50 rounded-xl text-xs italic text-blue-800 text-left font-black"><b>PHÂN TÍCH:</b> ${q.ex}</div>`;
+                h += `<div class="p-3 bg-blue-50 rounded-xl text-xs italic text-blue-800 text-left font-black"><b>PHÂN TÍCH:</b> ${adviceFixed}</div>`;
                 div.innerHTML = h; list.appendChild(div);
             });
             window.showModal('modal-history');
